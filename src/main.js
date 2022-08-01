@@ -11,18 +11,20 @@ Vue.config.productionTip = false
 let instance = null
 
 
-function renderApp({ container, data = {} } = {}) {
+function renderApp({ container, initUrl, ...rest }) {
   let router = new VueRouter({
     base: window.__POWERED_BY_QIANKUN__ ? '/load-mirco-app' : '/',
-    mode: 'history',
+    mode: initUrl ? 'abstract' : 'history',
     routes,
   });
-  console.log({ instance })
-  if (instance) return instance
-  return instance = new Vue({
+  instance = new Vue({
     router,
-    render: h => h(App, { props: data })
+    render: h => h(App, { props: rest })
   }).$mount(container ? container.querySelector('#app') : '#app')
+  if (initUrl) {
+    router.push(initUrl)
+  }
+  return instance
 }
 console.log(window.__POWERED_BY_QIANKUN__)
 if (!window.__POWERED_BY_QIANKUN__) {
